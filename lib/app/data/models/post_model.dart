@@ -9,12 +9,12 @@ class PostModel {
     required this.body
     });
 
-  PostModel.fromMap(Map<String, dynamic> map){
+  factory PostModel.fromMap(Map<String, dynamic> map){
     return PostModel(
       userId: map['userId'],
       title: map['title'],
       body: map['body'],
-      
+
       );
   }
 }
