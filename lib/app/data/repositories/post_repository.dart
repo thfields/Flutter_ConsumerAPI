@@ -2,11 +2,14 @@ import 'package:dio/dio.dart';
 import 'package:teste_esig/app/data/http/exceptions.dart';
 import 'package:teste_esig/app/data/http/http_client.dart';
 import 'package:teste_esig/app/data/models/post_model.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 
 abstract class IPostRepository {
   Future<List<PostModel>> getPost();
 }
+
 
 class PostRepository implements IPostRepository {
   final IHttpClient client;
@@ -16,28 +19,25 @@ class PostRepository implements IPostRepository {
   @override
   Future<List<PostModel>> getPost() async {
     try {
-      final response = await client.get(
+      final http.Response response = await client.get(
         url: 'https://jsonplaceholder.typicode.com/posts',
       );
 
       if (response.statusCode == 200) {
-        final List<PostModel> posts = [];
+        final List<dynamic> jsonList = json.decode(response.body);
 
-        final List<dynamic> body = response.data;
-
-        body.map((item) {
-          final PostModel post = PostModel.fromMap(item);
-          posts.add(post);
-        }).toList();
+        final List<PostModel> posts = jsonList
+            .map((item) => PostModel.fromMap(item))
+            .toList();
 
         return posts;
       } else if (response.statusCode == 404) {
-        throw NotFoundException('A url informada não é válida');
+        throw NotFoundException('A URL informada não é válida');
       } else {
         throw Exception('Não foi possível carregar os posts');
       }
-    } on DioError catch (e) {
-      // Handle Dio errors here
+    } on http.ClientException catch (e) {
+      // Handle HTTP client errors here
       throw Exception('Erro na requisição: ${e.message}');
     }
   }

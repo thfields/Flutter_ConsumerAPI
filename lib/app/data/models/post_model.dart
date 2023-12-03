@@ -11,9 +11,9 @@ class PostModel {
 
   factory PostModel.fromMap(Map<String, dynamic> map){
     return PostModel(
-      userId: map['userId'],
-      title: map['title'],
-      body: map['body'],
+      userId: map['userId'].toString(),
+      title: map['title'] ?? '',
+      body: map['body'] ?? '',
 
       );
   }
