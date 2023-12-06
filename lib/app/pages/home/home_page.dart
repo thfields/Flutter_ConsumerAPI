@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:teste_esig/app/data/http/exceptions.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:teste_esig/app/data/http/http_client.dart';
 import 'package:teste_esig/app/data/repositories/post_repository.dart';
 import 'package:teste_esig/app/pages/home/stores/post_store.dart';
@@ -14,7 +14,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   final PostStore store = PostStore(
     repository: PostRepository(
-      client: HttpClient(),
+      client: HttpClient(), // Provide an instance of HttpClient here
     ),
   );
 
@@ -38,21 +38,16 @@ class _HomePageState extends State<HomePage> {
         ),
         centerTitle: true,
       ),
-      body: AnimatedBuilder(
-        animation: Listenable.merge([
-          store.isLoading,
-          store.erro,
-          store.state,
-        ]),
-        builder: (context, child) {
-          if (store.isLoading.value) {
+      body: Observer(
+        builder: (context) {
+          if (store.isLoading) {
             return const Center(child: CircularProgressIndicator());
           }
 
-          if (store.erro.value.isNotEmpty) {
+          if (store.erro.isNotEmpty) {
             return Center(
               child: Text(
-                store.erro.value,
+                store.erro,
                 style: const TextStyle(
                   color: Colors.red,
                   fontWeight: FontWeight.w600,
@@ -63,7 +58,7 @@ class _HomePageState extends State<HomePage> {
             );
           }
 
-          if (store.state.value.isEmpty) {
+          if (store.state.isEmpty) {
             return const Center(
               child: Text(
                 'Nenhum post no feed',
@@ -81,9 +76,9 @@ class _HomePageState extends State<HomePage> {
                 height: 16,
               ),
               padding: const EdgeInsets.all(16),
-              itemCount: store.state.value.length,
+              itemCount: store.state.length,
               itemBuilder: (_, index) {
-                final item = store.state.value[index];
+                final item = store.state[index];
                 return Card(
                   elevation: 3,
                   shape: RoundedRectangleBorder(
@@ -137,14 +132,14 @@ class _HomePageState extends State<HomePage> {
                                       onPressed: () {
                                         Navigator.pop(context);
                                       },
-                                      child: Text('Fechar'),
+                                      child: const Text('Fechar'),
                                     ),
                                   ],
                                 );
                               },
                             );
                           },
-                          child: Text('Detalhes'),
+                          child: const Text('Detalhes'),
                         ),
                       ],
                     ),

@@ -1,35 +1,40 @@
 import 'package:flutter/material.dart';
+import 'package:mobx/mobx.dart';
 import 'package:teste_esig/app/data/http/exceptions.dart';
 import 'package:teste_esig/app/data/models/post_model.dart';
 import 'package:teste_esig/app/data/repositories/post_repository.dart';
 
-class PostStore {
+part 'post_store.g.dart';
+
+class PostStore = _PostStore with _$PostStore;
+
+abstract class _PostStore with Store {
   final IPostRepository repository;
 
-  // Variável reativa para o loading
-  final ValueNotifier<bool> isLoading = ValueNotifier<bool>(false);
+  @observable
+  bool isLoading = false;
 
-  // Variável reativa para o state
-  final ValueNotifier<List<PostModel>> state =
-      ValueNotifier<List<PostModel>>([]);
+  @observable
+  List<PostModel> state = [];
 
-  // Variável reativa para o erro
-  final ValueNotifier<String> erro = ValueNotifier<String>('');
+  @observable
+  String erro = '';
 
-  PostStore({required this.repository});
+  _PostStore({required this.repository});
 
-  Future getPosts() async {
-    isLoading.value = true;
+  @action
+  Future<void> getPosts() async {
+    isLoading = true;
 
     try {
       final result = await repository.getPost();
-      state.value = result;
+      state = result;
     } on NotFoundException catch (e) {
-      erro.value = e.message;
+      erro = e.message;
     } catch (e) {
-      erro.value = e.toString();
+      erro = e.toString();
     }
 
-    isLoading.value = false;
+    isLoading = false;
   }
 }
