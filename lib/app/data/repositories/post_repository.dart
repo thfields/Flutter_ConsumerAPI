@@ -1,4 +1,3 @@
-import 'package:dio/dio.dart';
 import 'package:teste_esig/app/data/http/exceptions.dart';
 import 'package:teste_esig/app/data/http/http_client.dart';
 import 'package:teste_esig/app/data/models/post_model.dart';
@@ -16,11 +15,6 @@ class PostRepository implements IPostRepository {
 
   PostRepository({required this.client});
 
-
-
-
-  
-
   @override
   Future<List<PostModel>> getPost() async {
     try {
@@ -31,18 +25,25 @@ class PostRepository implements IPostRepository {
       if (response.statusCode == 200) {
         final List<dynamic> jsonList = json.decode(response.body);
 
-        final List<PostModel> posts = jsonList
-            .map((item) => PostModel.fromMap(item))
-            .toList();
+                
+        List<PostModel> posts = [];
+
+       
+        for (var item in jsonList) {
+          
+          posts.add(PostModel.fromMap(item));
+        }
+
 
         return posts;
+        
       } else if (response.statusCode == 404) {
         throw NotFoundException('A URL informada não é válida');
       } else {
         throw Exception('Não foi possível carregar os posts');
       }
     } on http.ClientException catch (e) {
-      // Handle HTTP client errors here
+      
       throw Exception('Erro na requisição: ${e.message}');
     }
   }

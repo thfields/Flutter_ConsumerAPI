@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:mobx/mobx.dart';
 import 'package:teste_esig/app/data/http/exceptions.dart';
 import 'package:teste_esig/app/data/models/post_model.dart';
@@ -38,3 +37,5 @@ abstract class _PostStore with Store {
     isLoading = false;
   }
 }
+
+

@@ -7,7 +7,7 @@ class PostModel {
     required this.userId, 
     required this.title, 
     required this.body
-    });
+  });
 
   factory PostModel.fromMap(Map<String, dynamic> map){
     return PostModel(
@@ -17,4 +17,6 @@ class PostModel {
 
       );
   }
+
+  
 }
